@@ -1,8 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { convertToModelMessages, smoothStream, stepCountIs, type UIMessage, pipeUIMessageStreamToResponse, toUIMessageStream } from 'ai';
-// import { z } from 'zod';
+import { convertToModelMessages, stepCountIs, type UIMessage, pipeUIMessageStreamToResponse, toUIMessageStream } from 'ai';
 import { streamText } from 'ai-sdk-ollama';
 import { model } from './model';
 import  { tools }  from './tools';
@@ -41,21 +40,29 @@ for await (const textPart of result.textStream) {
 
 // api route
 app.post('/api/chat', async (req, res) => {
-  const { messages }: { messages: UIMessage[] } = req.body;
+  try {
+    const { messages }: { messages: UIMessage[] } = req.body;
 
-  const result = await streamText({
-    model,
-    system:
-      'You are a helpful shopping assistant. Use showProducts to display products. Keep response short.',
-    messages: await convertToModelMessages(messages),
-    tools,
-    stopWhen: stepCountIs(4),
-  })
+    const result = await streamText({
+      model,
+      system: 'You are a helpful shopping assistant. Use showProducts to display products. Keep response short.',
+      messages: await convertToModelMessages(messages),
+      tools,
+      stopWhen: stepCountIs(4),
+    });
 
-  // take the UI message stream to a nodejs reponse object
-  pipeUIMessageStreamToResponse({ stream: toUIMessageStream({ stream: result.stream }), response: res })
-  
-})
+    const uiStream = toUIMessageStream({ stream: result.stream });
+
+    pipeUIMessageStreamToResponse({ 
+      stream: uiStream, 
+      response: res
+    });
+
+  } catch (error) {
+    console.error("Streaming error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.listen(PORT, (): void => {
   console.log(`Server is running on port ${PORT}`)
