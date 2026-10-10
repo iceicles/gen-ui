@@ -1,73 +1,61 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { createDataStreamResponse, streamText, tool, stepCountIs } from 'ai';
-import { createOllama } from 'ollama-ai-provider-v2';
-import { z } from 'zod';
+import { convertToModelMessages, smoothStream, stepCountIs, type UIMessage, pipeUIMessageStreamToResponse, toUIMessageStream } from 'ai';
+// import { z } from 'zod';
+import { streamText } from 'ai-sdk-ollama';
+import { model } from './model';
+import  { tools }  from './tools';
 
 const app = express();
 const PORT = 4000;
+app.use(cors({ origin: 'http://localhost:5173' })); 
+app.use(express.json());
 
-// Enable CORS so your React frontend (usually on port 3000 or 5173) can communicate with Express
-// app.use(cors({ origin: 'http://localhost:5173' })); 
-// app.use(express.json());
+// smoke test - works!
 
-// // Initialize Ollama Provider
-// const ollama = createOllama({
-//   baseURL: 'http://localhost:11434/api', 
-// });
+// for generating text all at once -
+/* 
+const { text } = await generateText({
+  model: ollama('qwen2.5'),
+  prompt: 'tell me how to make ice cream at home - the most delicious ice cream ever!!',
+  temperature: 0.8
+})
+console.log('AI Output: ', text) 
 
-// // POST Route for Chat and Gen UI
-// app.post('/api/chat', async (req, res) => {
-//   const { messages } = req.body;
+// for streaming - 
+const result = await streamText({
+  model: ollama("qwen2.5"),
+  prompt: 'Invent a new holiday and describe its traditions.',
+  experimental_transform: smoothStream({
+    delayInMs: 50, // 50ms between chunks
+    chunking: 'line', // 'word' | 'line' | RegExp
+  }),
+});
 
-//   // 1. Create a data stream response compatible with standard Node/Express HTTP
-//   const streamResponse = createDataStreamResponse({
-//     execute: async (dataStream) => {
-      
-//       // 2. Run your streamText function inside the execution wrapper
-//       const result = streamText({
-//         model: ollama('qwen3:8b'),
-//         // Pass historical messages forwarded from your React state
-//         messages: messages, 
-//         tools: {
-//           showProducts: tool({
-//             description: 'Display product cards to the user',
-//             inputSchema: z.object({
-//               query: z.string(),
-//               maxPrice: z.number().optional(),
-//             }),
-//             execute: async ({ query, maxPrice }) => {
-//               // Mock database data that matches your React Gen UI expectation
-//               return [
-//                 { id: '1', name: 'Altra Escalante 4', price: 130, brand: 'Altra' },
-//                 { id: '2', name: 'Brooks Ghost 16', price: 140, brand: 'Brooks' }
-//               ];
-//             },
-//           }),
-//         },
-//         stopWhen: stepCountIs(3),
-//       });
+// example: use textStream as an async iterable
+for await (const textPart of result.textStream) {
+  console.log(textPart);
+} 
+*/
 
-//       // 3. Pipe the AI result into the dataStream to send chunks seamlessly to React
-//       result.mergeIntoDataStream(dataStream);
-//     },
-//   });
+// api route
+app.post('/api/chat', async (req, res) => {
+  const { messages }: { messages: UIMessage[] } = req.body;
 
-//   // 4. Set correct streaming headers and send down to client
-//   res.writeHead(streamResponse.status, streamResponse.headers);
-//   streamResponse.body.pipeTo(new WritableStream({
-//     write(chunk) {
-//       res.write(chunk);
-//     },
-//     close() {
-//       res.end();
-//     }
-//   }));
-// });
+  const result = await streamText({
+    model,
+    system:
+      'You are a helpful shopping assistant. Use showProducts to display products. Keep response short.',
+    messages: await convertToModelMessages(messages),
+    tools,
+    stopWhen: stepCountIs(4),
+  })
 
-
-
+  // take the UI message stream to a nodejs reponse object
+  pipeUIMessageStreamToResponse({ stream: toUIMessageStream({ stream: result.stream }), response: res })
+  
+})
 
 app.listen(PORT, (): void => {
   console.log(`Server is running on port ${PORT}`)
