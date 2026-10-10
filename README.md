@@ -24,4 +24,5 @@ Imagine your could filter out the fluff and get to where you want!
 
 ## Progress
 
-<img width="1228" height="923" alt="image" src="https://github.com/user-attachments/assets/c07760fd-a031-4141-a073-70b5ed491f2a" />
+<img width="1246" height="1047" alt="image" src="https://github.com/user-attachments/assets/aad20052-c4d8-4df3-9fae-7cd5f738dc94" />
+
