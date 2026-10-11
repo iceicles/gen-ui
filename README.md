@@ -24,5 +24,9 @@ Imagine your could filter out the fluff and get to where you want!
 
 ## Progress
 
+#### Wired client and server with useChat for generating UI interfaces
 <img width="1246" height="1047" alt="image" src="https://github.com/user-attachments/assets/aad20052-c4d8-4df3-9fae-7cd5f738dc94" />
+
+#### Enabled AI generated insights/summary via useCompletion hook
+<img width="1246" height="1047" alt="image" src="https://github.com/user-attachments/assets/e3edfdaf-c8a3-4cc1-ba53-f18b818890c7" />
 
