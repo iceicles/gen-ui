@@ -38,7 +38,7 @@ for await (const textPart of result.textStream) {
 } 
 */
 
-// api route
+// api routes
 app.post('/api/chat', async (req, res) => {
   try {
     const { messages }: { messages: UIMessage[] } = req.body;
@@ -63,6 +63,30 @@ app.post('/api/chat', async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+app.post('/api/completion', async (req, res) => {
+  try {
+    const { prompt }: { prompt: string } = req.body; // prompt from client on button click
+
+    const result = await streamText({
+      model,
+      system: 'You are a helpful shopping assistant. Keep response short.',
+      messages: [{ role: 'user', content: prompt }],
+      stopWhen: stepCountIs(4),
+    });
+
+    const uiStream = toUIMessageStream({ stream: result.stream });
+
+    pipeUIMessageStreamToResponse({ 
+      stream: uiStream, 
+      response: res
+    });
+  } catch (error) {
+    console.log("Streaming error:", error);
+    res.status(500).json({error: "Internal Server Error"});
+  }
+})
 
 app.listen(PORT, (): void => {
   console.log(`Server is running on port ${PORT}`)
