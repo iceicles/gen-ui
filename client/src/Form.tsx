@@ -11,7 +11,7 @@ export function Form(Form: FormProps) {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (!input.trim()) return; // Optional: prevents sending empty messages
+        if (!input.trim()) return;
         sendMessage({ text: input });
         setInput('');
       }}

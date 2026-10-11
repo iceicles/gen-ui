@@ -9,7 +9,7 @@ export const tools = {
             maxPrice: z.number().optional(),
         }),
         execute: async ({ query, maxPrice }) => {
-            // Mock database data that matches your React Gen UI expectation
+            // can fetch tools from a database or an api
             return [
                 { id: '1', name: 'Altra Escalante 4', price: 130, brand: 'Altra' },
                 { id: '2', name: 'Brooks Ghost 16', price: 140, brand: 'Brooks' }

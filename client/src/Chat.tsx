@@ -18,7 +18,24 @@ export function Chat() {
       {messages.map((m) => (
         <div key={m.id}>
           {m.parts.map((part, i) => {
-            if (part.type === 'text') return <p key={i}>{part.text}</p>;
+            if (part.type === 'text') {
+              return (
+                <p
+                  style={
+                    m.role === 'user'
+                      ? {
+                          padding: '0 5px',
+                          border: '1px solid #ccc',
+                          borderRadius: '5px',
+                        }
+                      : undefined
+                  }
+                  key={i}
+                >
+                  {part.text}
+                </p>
+              );
+            }
 
             if (part.type === 'tool-showProducts') {
               switch (part.state) {
@@ -33,7 +50,7 @@ export function Chat() {
                     />
                   );
                 case 'output-error':
-                  return <div key={i}> {part.errorText} </div>;
+                  return <div key={i}>Error: {part.errorText} </div>;
               }
             }
             return null;
