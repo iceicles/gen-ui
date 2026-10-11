@@ -18,7 +18,13 @@ Imagine your could filter out the fluff and get to where you want!
 
 ### ai framework
 - Vercel's AI SDK
-- [AI-SDK-Ollama]( https://github.com/jagreehal/ai-sdk-ollama)
+- [AI-SDK-Ollama]( https://github.com/jagreehal/ai-sdk-ollama)'
+
+### LLM host
+- Ollama for local model management
+
+### LLM
+- Currently Qwen2.5 or Qwen3
 
 <br>
 
