@@ -1,7 +1,7 @@
 # Exploring Gen UI
 Imagine you could create UI's on the fly! <br>
 Imagine your experience was bespoke! <br>
-Imagine your could filter out the fluff and get to where you want!
+Imagine you could filter out the fluff and get to where you want!
 
 ## Package overview
 
