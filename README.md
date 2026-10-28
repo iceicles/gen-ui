@@ -36,3 +36,5 @@ Imagine your could filter out the fluff and get to where you want!
 #### Enabled AI generated insights/summary via useCompletion hook
 <img width="1246" height="1047" alt="image" src="https://github.com/user-attachments/assets/e3edfdaf-c8a3-4cc1-ba53-f18b818890c7" />
 
+#### Enabled product recommendation & comparison via useObject hook
+<img width="1547" height="1016" alt="image" src="https://github.com/user-attachments/assets/f8ff9ad7-2f1d-4c8d-8123-584a877e0ade" />
