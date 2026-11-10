@@ -3,11 +3,9 @@ import { Chat } from './Chat';
 
 function App() {
   return (
-    <>
-      <section id='center'>
-        <Chat />
-      </section>
-    </>
+    <main className='chat'>
+      <Chat />
+    </main>
   );
 }
 
